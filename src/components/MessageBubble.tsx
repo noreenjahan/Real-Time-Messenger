@@ -10,7 +10,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
 return (
   <div className={`flex ${isMine ? 'justify-end' : 'justify-start'} mb-2 m-3`}>
     <div className={`max-w-xs px-3 py-2 rounded-2xl ${isMine ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
-      <p>{message.content}</p>
+      <p className="whitespace-pre-wrap">{message.content}</p>
       <p className="text-xs opacity-70">
         {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
       </p>

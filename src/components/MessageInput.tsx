@@ -51,7 +51,7 @@ const MessageInput = ({ dispatch, socket }: MessageInputProps) => {
         <div className="flex items-end">
             <textarea
                 ref={textareaRef}
-                className="border rounded p-2 m-2 w-full resize-none overflow-y-auto"
+                className="border border-blue-800 rounded p-2 m-2 w-full resize-none overflow-y-auto"
                 style={{ maxHeight: `${MAX_HEIGHT}px` }}
                 placeholder="Type a message..."
                 value={text}

@@ -6,14 +6,19 @@ import type { ChatState } from "./reducers/chatReducer";
 import type { Message } from "./types/message";
 import MockWebSocket from "./services/mockWebSocket";
 
-const initialMessages: Message[] = [
-  { id: '1', senderID: 'me', content: 'hey, you free later?', timestamp: Date.now() - 60000, status: 'read' },
-  { id: '2', senderID: 'alice', content: 'yeah whats up', timestamp: Date.now() - 45000, status: 'read' },
-  { id: '3', senderID: 'me', content: 'wanna review the ping assignment', timestamp: Date.now() - 30000, status: 'delivered' },
-];
+const generateBulkMessages = (count: number): Message[] => {
+  const senders: Message['senderID'][] = ['me', 'alice', 'bob'];
+  return Array.from({ length: count }, (_, i) => ({
+    id: crypto.randomUUID(),
+    senderID: senders[i % senders.length],
+    content: `Test message number ${i + 1}`,
+    timestamp: Date.now() - (count - i) * 60000,
+    status: 'read' as const,
+  }));
+};
 
 const initialState: ChatState = {
-  messages: initialMessages,
+  messages: generateBulkMessages(200),
 };
 
 const App = () => {
@@ -58,7 +63,7 @@ const App = () => {
   }, []);
 
   return (
-    <div>
+    <div className="flex flex-col h-screen">
       <ChatWindow messages={state.messages} />
       {typingUsers.size > 0 && (
         <p className="text-xs text-gray-500 px-2">

@@ -6,7 +6,7 @@ interface ChatWindowProps {
     messages: Message[];
 }
 
-const NEAR_BOTTOM_THRESHOLD = 100; // px
+const NEAR_BOTTOM_THRESHOLD = 100;
 
 const ChatWindow = ({ messages }: ChatWindowProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -17,23 +17,17 @@ const ChatWindow = ({ messages }: ChatWindowProps) => {
     const handleScroll = () => {
         const el = containerRef.current;
         if (!el) return;
-
         const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
         const nearBottom = distanceFromBottom < NEAR_BOTTOM_THRESHOLD;
-
         setIsNearBottom(nearBottom);
-        if (nearBottom) {
-            setHasNewMessages(false);
-        }
+        if (nearBottom) setHasNewMessages(false);
     };
 
     useEffect(() => {
         const el = containerRef.current;
         if (!el) return;
-
         const messageWasAdded = messages.length > prevMessageCount.current;
         prevMessageCount.current = messages.length;
-
         if (!messageWasAdded) return;
 
         const latestMessage = messages[messages.length - 1];
@@ -55,22 +49,19 @@ const ChatWindow = ({ messages }: ChatWindowProps) => {
     };
 
     return (
-        <div className="relative">
-            <div
-                ref={containerRef}
-                onScroll={handleScroll}
-                className="h-165 overflow-y-auto"
-            >
-                {messages.map((message) => (
-                    <MessageBubble key={message.id} message={message} />
-                ))}
+        <div className="relative flex-1 flex flex-col min-h-0">
+            <div ref={containerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto min-h-0">
+                {messages.map((message, index) => {
+                    const nextMessage = messages[index + 1];
+                    const isLastInGroup = !nextMessage || nextMessage.senderID !== message.senderID;
+                    return (
+                        <MessageBubble key={message.id} message={message} showTimestamp={isLastInGroup} />
+                    );
+                })}
             </div>
 
             {hasNewMessages && (
-                <button
-                    onClick={scrollToBottom}
-                    className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs px-3 py-1 rounded-full shadow"
-                >
+                <button onClick={scrollToBottom} className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs px-3 py-1 rounded-full shadow">
                     New messages ↓
                 </button>
             )}

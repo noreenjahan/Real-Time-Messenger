@@ -74,7 +74,7 @@ useEffect(() => {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen">
+    <div  className="flex flex-col h-dvh">
       <Header/>
       <ChatWindow messages={state.messages} />
       {typingUsers.size > 0 && (

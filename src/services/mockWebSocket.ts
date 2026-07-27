@@ -8,7 +8,7 @@ type MockSocketEvent =
 
 type Listener = (event: MockSocketEvent) => void;
 
-const FAKE_CONTACTS = ['alice', 'bob'];
+export const FAKE_CONTACTS = ['alice', 'bob'];
 const FAKE_REPLIES = [
   "haha true",
   "no way really?",

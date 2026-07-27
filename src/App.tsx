@@ -5,6 +5,7 @@ import chatReducer from "./reducers/chatReducer";
 import type { ChatState } from "./reducers/chatReducer";
 import type { Message } from "./types/message";
 import MockWebSocket from "./services/mockWebSocket";
+import Header from "./components/Header";
 
 const generateBulkMessages = (count: number): Message[] => {
   const senders: Message['senderID'][] = ['me', 'alice', 'bob'];
@@ -18,13 +19,23 @@ const generateBulkMessages = (count: number): Message[] => {
 };
 
 const initialState: ChatState = {
-  messages: generateBulkMessages(200),
+  messages: generateBulkMessages(10),
 };
+
 
 const App = () => {
   const [state, dispatch] = useReducer(chatReducer, initialState);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
   const socketRef = useRef<MockWebSocket | null>(null);
+
+  const [announcement, setAnnouncement] = useState('');
+
+useEffect(() => {
+  if (state.messages.length === 0) return;
+  const latest = state.messages[state.messages.length - 1];
+  const who = latest.senderID === 'me' ? 'You' : latest.senderID;
+  setAnnouncement(`${who}: ${latest.content}`);
+}, [state.messages.length]);
 
   useEffect(() => {
     const socket = new MockWebSocket();
@@ -64,6 +75,7 @@ const App = () => {
 
   return (
     <div className="flex flex-col h-screen">
+      <Header/>
       <ChatWindow messages={state.messages} />
       {typingUsers.size > 0 && (
         <p className="text-xs text-gray-500 px-2">
@@ -71,6 +83,9 @@ const App = () => {
         </p>
       )}
       <MessageInput dispatch={dispatch} socket={socketRef.current} />
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+  {announcement}
+</div>
     </div>
   );
 }
